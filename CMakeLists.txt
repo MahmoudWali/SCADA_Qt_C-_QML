@@ -23,6 +23,7 @@ qt_add_qml_module(appSCADA
         QML_FILES CustomDial.qml
         QML_FILES NumericalDisplay.qml
         QML_FILES Speed.qml SpeedNeedle.qml
+        SOURCES slmpthread.h slmpthread.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

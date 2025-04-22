@@ -24,10 +24,12 @@ class SLMP : public QObject
 public:
     explicit SLMP(QObject *parent = nullptr);
 
+    // QML side functions
+    Q_INVOKABLE void startReading();
     Q_INVOKABLE void resetPLC();
     Q_INVOKABLE void setSeries(QAbstractSeries *series);
 
-    // protocol functions
+    // SLMP protocol functions
     int init();
     void write_slmp();
     void read_slmp();

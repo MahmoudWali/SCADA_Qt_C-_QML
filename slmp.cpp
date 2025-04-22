@@ -8,7 +8,7 @@ SLMP::SLMP(QObject *parent)
     // write_slmp();
 
     timer = new QTimer(this);
-    timer->setInterval(250);
+    timer->setInterval(50);
     connect(timer, &QTimer::timeout, this, &SLMP::readingFromPLC);
     timer->start();
 }
@@ -76,6 +76,17 @@ void SLMP::read_slmp()
         // set readData1 and readData2 variables for qml side
         setReadData1(data[0]);
         setReadData2(data[1]);
+        // setReadData1(static_cast<double>(data[0]));
+        // setReadData2(static_cast<double>(data[1]));
+        // chart series
+        if (!m_series)
+            return;
+
+        m_series->append(readData1, readData1);    //c
+        if (m_series->count() > 500)
+        {
+            m_series->removePoints(0, m_series->count() - 100);
+        }
     }
 
     melcli_free(data);
@@ -85,22 +96,29 @@ void SLMP::readingFromPLC()
 {
     read_slmp();
 
-    static int c = 0;
-    c++;
-    setReadData1(c);    //QRandomGenerator::global()->bounded(281)
-    setReadData2(100-c);
+    // offline simulation
+    // static int c = 0;
+    // c++;
+    // setReadData1(c);    //QRandomGenerator::global()->bounded(281)
+    // setReadData2(100-c);
 
-    qDebug() << "D12: " << c << ", D22: " << 100 -c;
+    // qDebug() << "D12: " << c << ", D22: " << 100 -c;
 
-    // chart series
-    if (!m_series)
-        return;
+    // // chart series
+    // if (!m_series)
+    //     return;
 
-    m_series->append(c, QRandomGenerator::global()->bounded(281));    //c
-    if (m_series->count() > 500)
-    {
-        m_series->removePoints(0, m_series->count() - 100);
-    }
+    // m_series->append(c, QRandomGenerator::global()->bounded(281));    //c
+    // if (m_series->count() > 500)
+    // {
+    //     m_series->removePoints(0, m_series->count() - 100);
+    // }
+    //
+}
+
+void SLMP::startReading()
+{
+
 }
 
 void SLMP::resetPLC()

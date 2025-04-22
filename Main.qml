@@ -18,7 +18,7 @@ ApplicationWindow {
 
     GridLayout {
         rows: 2
-        columns: 3
+        columns: 4
         anchors.fill: parent
 
 
@@ -56,6 +56,36 @@ ApplicationWindow {
             // layout alignment
             Layout.fillHeight: false
             Layout.fillWidth: false
+        }
+
+        RoundButton {
+            id: startId
+            width: 200
+            height: 200
+            // layout alignment
+            Layout.alignment: Qt.AlignHCenter
+            Layout.margins: 50
+
+
+            text: "Start"
+            font.bold: true
+            font.pixelSize: 25
+            // background: Rectangle {
+            //     color: "yellow"
+            //     implicitHeight: 50
+            //     implicitWidth: 50
+            //     radius: 360
+            // }
+
+
+            Layout.minimumHeight: 150
+            Layout.minimumWidth: 150
+            Layout.fillHeight: false
+            Layout.fillWidth: false
+
+            onClicked: {
+                SLMP.startReading();
+            }
         }
 
         RoundButton {
@@ -119,6 +149,7 @@ ApplicationWindow {
             Layout.fillWidth: true
             Layout.minimumHeight: 250
             Layout.minimumWidth: 250
+            Layout.columnSpan: 2
             antialiasing: true
 
             LineSeries {
