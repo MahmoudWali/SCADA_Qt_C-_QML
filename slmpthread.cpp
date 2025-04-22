@@ -1,6 +1,15 @@
 #include "slmpthread.h"
 
-SLMPThread::SLMPThread() {}
+SLMPThread::SLMPThread(QObject* parent) : QThread(parent), m_running(true), m_file("D:/readout.txt")
+{
+    if (!m_file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text))
+    {
+        qWarning() << "Failed to open file for writing";
+    }
+    m_stream.setDevice(&m_file);
+    m_stream.setRealNumberNotation(QTextStream::FixedNotation); // Optional: better formatting
+    m_stream.setRealNumberPrecision(6);
+}
 
 int SLMPThread::init()
 {
@@ -30,6 +39,11 @@ int SLMPThread::init()
     qDebug() << "Connected.";
 
     return 0;
+}
+
+void SLMPThread::stopReading()
+{
+    m_running.storeRelaxed(false);
 }
 
 void SLMPThread::write_slmp()
@@ -63,11 +77,68 @@ void SLMPThread::read_slmp()
         qDebug() << "D12=" << data[0] << ", D22=" << data[1];
     }
 
+    //emit this signal to anywhere (like to QML side)
+    //emit newReading(data[0], data[1]);
+
+    c++;
+    emit newReading(c, c);
+    m_buffer.append(c);
+    if (m_buffer.size() >= 1000)
+    {
+        flushBufferToFile();
+    }
+    qDebug() << "Emit done. " << c;
+
+    if (!m_series1 && !m_series2)
+        return;
+
+    //m_series->append(data[0], data[1]);    //c
+    m_series1->append(c, c);    //c
+    m_series2->append(c, 1000 - c);    //c
+
+    // if (m_series->count() > 500)
+    // {
+    //     m_series->removePoints(0, m_series->count() - 100);
+    // }
+
     melcli_free(data);
 }
 
+void SLMPThread::setSeries(QAbstractSeries *series1, QAbstractSeries *series2)
+{
+    m_series1 = qobject_cast<QLineSeries*>(series1);
+    m_series2 = qobject_cast<QLineSeries*>(series2);
+}
+
+void SLMPThread::flushBufferToFile()
+{
+    // if (m_file.isOpen() && !m_buffer.isEmpty())
+    // {
+    //     m_file.write(reinterpret_cast<const char*>(m_buffer.constData()), m_buffer.size() * sizeof(double));
+    //     m_buffer.clear();
+    // }
+
+
+    if (m_file.isOpen() && !m_buffer.isEmpty()) {
+        for (double value : std::as_const(m_buffer)) {
+            m_stream << value << "\n";
+        }
+        m_stream.flush();
+        m_buffer.clear();
+    }
+}
 
 void SLMPThread::run()
 {
+    m_buffer.reserve(100000); // Reserve space to reduce reallocations
 
+    while (m_running.loadRelaxed())
+    {
+        read_slmp();
+
+        QThread::msleep(20);
+    }
+
+    flushBufferToFile();
+    m_file.close();
 }

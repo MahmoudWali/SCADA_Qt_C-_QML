@@ -4,22 +4,89 @@ import QtQuick.Layouts
 import QtCharts
 import QtQuick.Controls.Material
 import QtQuick.Shapes
-
+import SLMPWorkerThreadAPI 1.0
 
 ApplicationWindow {
     width: 1200
     height: 700
     visible: true
+    visibility: "Maximized"
     title: qsTr("SLMP SCADA")
 
     Material.theme: Material.Light
     // Material.accent: Material.Orange
     // Material.background: Material.Purple
 
+    SLMPWorkerThread {
+        id: slmpWorkerThreadId
+        onNewReading: (D12, D22) => {
+            circularLabelTextId.text = D12
+            numericLabelId.value = D22
+
+            meter1Id.value = Math.min(D12, 280)
+            meter2Id.value = Math.min(D22, 280)
+        }
+    }
+
+    // Connections {
+    //     target:  slmpWorkerThreadId
+    //     function onNewReading(D12, D22) {
+    //         circularLabelTextId.text = D12
+    //         numericLabelId.value = D22
+    //     }
+    // }
+
     GridLayout {
-        rows: 2
-        columns: 4
+        rows: 4
+        columns: 2
         anchors.fill: parent
+
+        RoundButton {
+            id: startId
+            width: 200
+            height: 200
+            // layout alignment
+            Layout.alignment: Qt.AlignHCenter
+            Layout.margins: 10
+
+            text: "Start"
+            font.bold: true
+            font.pixelSize: 25
+
+            Layout.minimumHeight: 150
+            Layout.minimumWidth: 150
+            Layout.fillHeight: false
+            Layout.fillWidth: false
+
+            onClicked: {
+                //SLMP.setSeries(seriesId)
+                slmpWorkerThreadId.init()
+                slmpWorkerThreadId.setSeries(series1Id, series2Id)
+                slmpWorkerThreadId.start()
+            }
+        }
+
+        RoundButton {
+            id: stopBtnId
+            width: 200
+            height: 200
+            // layout alignment
+            Layout.alignment: Qt.AlignHCenter
+            Layout.margins: 10
+
+            text: "Stop"
+            font.bold: true
+            font.pixelSize: 25
+
+            Layout.minimumHeight: 150
+            Layout.minimumWidth: 150
+            Layout.fillHeight: false
+            Layout.fillWidth: false
+
+            onClicked: {
+                slmpWorkerThreadId.stopReading();
+            }
+        }
 
 
         Rectangle {
@@ -37,6 +104,7 @@ ApplicationWindow {
             Layout.minimumWidth: 100
 
             Text {
+                id: circularLabelTextId
                 anchors.centerIn: parent
                 text: SLMP.readData1
                 color: "white"
@@ -47,114 +115,56 @@ ApplicationWindow {
 
 
         NumericalDisplay {
-            id: label2Id
+            id: numericLabelId
             title: "Pressure"
             titleColor: "black"
             valueColor: "black"
             value: SLMP.readData2
 
             // layout alignment
+            Layout.alignment: Qt.AlignCenter
             Layout.fillHeight: false
             Layout.fillWidth: false
         }
-
-        RoundButton {
-            id: startId
-            width: 200
-            height: 200
-            // layout alignment
-            Layout.alignment: Qt.AlignHCenter
-            Layout.margins: 50
-
-
-            text: "Start"
-            font.bold: true
-            font.pixelSize: 25
-            // background: Rectangle {
-            //     color: "yellow"
-            //     implicitHeight: 50
-            //     implicitWidth: 50
-            //     radius: 360
-            // }
-
-
-            Layout.minimumHeight: 150
-            Layout.minimumWidth: 150
-            Layout.fillHeight: false
-            Layout.fillWidth: false
-
-            onClicked: {
-                SLMP.startReading();
-            }
-        }
-
-        RoundButton {
-            id: resetBtnId
-            width: 200
-            height: 200
-            // layout alignment
-            Layout.alignment: Qt.AlignHCenter
-            Layout.margins: 50
-
-
-            text: "Reset"
-            font.bold: true
-            font.pixelSize: 25
-            // background: Rectangle {
-            //     color: "yellow"
-            //     implicitHeight: 50
-            //     implicitWidth: 50
-            //     radius: 360
-            // }
-
-
-            Layout.minimumHeight: 150
-            Layout.minimumWidth: 150
-            Layout.fillHeight: false
-            Layout.fillWidth: false
-
-            onClicked: {
-                SLMP.resetPLC();
-            }
-        }
-
-
-        // Gauge {
-        //     id: guageId
-        //     customValue: SLMP.readData1
-        //     Layout.margins: 5
-        // }
 
         Speed {
-            width: 400
-            height: 400
+            id: meter1Id
+            width: 300
+            height: 300
             Layout.margins: 10
-            value: Math.min(SLMP.readData1, 280)
-        }
-
-        CustomDial {
-            id: dial
             Layout.alignment: Qt.AlignCenter
-            width: 200
-            height: 200
-            value: SLMP.readData1
+            //value: Math.min(SLMP.readData1, 280)
         }
 
-
+        Speed {
+            id: meter2Id
+            width: 300
+            height: 300
+            Layout.margins: 10
+            Layout.alignment: Qt.AlignCenter
+            //value: Math.min(SLMP.readData1, 280)
+        }
 
         ChartView {
             id: chartId
             title: "Reading from PLC via SLMP Protocol"
             Layout.fillHeight: true
             Layout.fillWidth: true
-            Layout.minimumHeight: 250
+            Layout.minimumHeight: 400
             Layout.minimumWidth: 250
             Layout.columnSpan: 2
             antialiasing: true
 
             LineSeries {
-                id: seriesId
+                id: series1Id
                 name: "D12"
+                axisX: xAxisId
+                axisY: yAxisId
+            }
+
+            LineSeries {
+                id: series2Id
+                name: "D22"
                 axisX: xAxisId
                 axisY: yAxisId
             }
@@ -162,14 +172,14 @@ ApplicationWindow {
             ValuesAxis {
                 id: xAxisId
                 min: 0
-                max: 500
+                max: 1000
                 tickCount: 10
             }
 
             ValuesAxis {
                 id: yAxisId
                 min: 0
-                max: 500
+                max: 1000
                 tickCount: 10
             }
 
@@ -203,7 +213,7 @@ ApplicationWindow {
         // }
 
         Component.onCompleted: {
-            SLMP.setSeries(seriesId);
+            //SLMP.setSeries(seriesId);
         }
 
     }

@@ -14,6 +14,8 @@
 #include <windows.h>
 #include "melcli/melcli.h"
 
+#include "slmpthread.h"
+
 
 class SLMP : public QObject
 {
@@ -30,9 +32,9 @@ public:
     Q_INVOKABLE void setSeries(QAbstractSeries *series);
 
     // SLMP protocol functions
-    int init();
-    void write_slmp();
-    void read_slmp();
+    // int init();
+    // void write_slmp();
+    // void read_slmp();
 
     // qt c++ qml side
     double getReadData1() const;
@@ -67,7 +69,11 @@ private:
     // qt variables
     double readData1 = 0.0;
     double readData2 = 0.0;
-    QLineSeries *m_series;;
+    QLineSeries *m_series;
+
+
+    // SLMP Thread
+    //SLMPThread *slmpThread;
 };
 
 #endif // SLMP_H

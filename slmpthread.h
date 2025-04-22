@@ -3,6 +3,11 @@
 
 #include <QObject>
 #include <QThread>
+#include <QAtomicInt>
+#include <QtCharts/QLineSeries>
+#include <QFile>
+#include <QTextStream>
+#include <QElapsedTimer>
 #include <QDebug>
 
 #include <stdio.h>
@@ -18,17 +23,23 @@ class SLMPThread : public QThread
 {
     Q_OBJECT
 public:
-    SLMPThread();
+    SLMPThread(QObject* parent = nullptr);
 
     // SLMP Protocol functions
-    int init();
+    Q_INVOKABLE void setSeries(QAbstractSeries *series1, QAbstractSeries *series2);
+    Q_INVOKABLE int init();
+    Q_INVOKABLE void stopReading();
     void write_slmp();
     void read_slmp();
+    void flushBufferToFile();
 
     // QThread interface
 protected:
-    void run();
+    void run() override;
 
+
+signals:
+    void newReading(double D12, double D22);
 
 private:
     int ctxtype = MELCLI_TYPE_TCPIP;
@@ -41,6 +52,15 @@ private:
     const melcli_timeout_t timeout = MELCLI_TIMEOUT_DEFAULT;
 
     melcli_ctx_t *g_ctx = NULL;
+
+    double c {0};
+    QLineSeries *m_series1, *m_series2;
+    QVector<double> m_buffer;
+    QFile m_file;
+    QTextStream m_stream; // Text writer
+
+    // Thread Control
+    QAtomicInt m_running;
 };
 
 #endif // SLMPTHREAD_H

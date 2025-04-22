@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include "slmp.h"
+#include "slmpthread.h"
 
 int main(int argc, char *argv[])
 {
@@ -10,6 +11,8 @@ int main(int argc, char *argv[])
     SLMP slmpConnection;
 
     QQmlApplicationEngine engine;
+
+    qmlRegisterType<SLMPThread>("SLMPWorkerThreadAPI", 1, 0, "SLMPWorkerThread");
 
     engine.rootContext()->setContextProperty("SLMP", &slmpConnection);
 
