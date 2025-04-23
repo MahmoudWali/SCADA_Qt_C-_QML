@@ -15,24 +15,6 @@ Rectangle {
     property color titleColor: "black"
     property color valueColor: "black"
 
-
-//    gradient: Gradient {
-//        GradientStop {
-//            position: 0
-//            color: "white"
-//        }
-
-//        GradientStop {
-//            position: 0.5
-//            color: "light blue"
-//        }
-
-//        GradientStop {
-//            position: 1.0
-//            color: "light blue"
-//        }
-//    }
-
     ColumnLayout {
         anchors.fill: parent
         spacing: 5
@@ -50,7 +32,7 @@ Rectangle {
         Text {
             id: valueId
             text: {
-                var formattedNumber = ("000" + Math.abs(value).toFixed(2).toString()).slice(-6);
+                var formattedNumber = ("000000" + Math.abs(value).toFixed(0).toString()).slice(-6);
                 return formattedNumber;
             }
             color: valueColor

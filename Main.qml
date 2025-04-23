@@ -20,12 +20,17 @@ ApplicationWindow {
     SLMPWorkerThread {
         id: slmpWorkerThreadId
         onNewReading: (D12, D22) => {
-            circularLabelTextId.text = D12
-            numericLabelId.value = D22
+                          text1Id.text = D12
+                          text2Id.text = D22
 
-            meter1Id.value = Math.min(D12, 280)
-            meter2Id.value = Math.min(D22, 280)
-        }
+                          // xAxisId.min = D12
+                          // yAxisId.min = D12
+
+                          // xAxisId.max = D12 + 1000
+                          // yAxisId.max = D12 + 1000
+                          // meter1Id.value = Math.min(D12, 280)
+                          // meter2Id.value = Math.min(D22, 280)
+                      }
     }
 
     // Connections {
@@ -90,23 +95,23 @@ ApplicationWindow {
 
 
         Rectangle {
-            id: circularLabel
-            width: 100
+            id: circularLabel1Id
+            width: 200
             height: 100
             color: "orange"
             border.color: "black"
             border.width: 2
             // Layout.fillHeight: true
             // Layout.fillWidth: true
-            radius: width / 2
+            radius: 5
             Layout.alignment: Qt.AlignCenter
             Layout.minimumHeight: 100
             Layout.minimumWidth: 100
 
             Text {
-                id: circularLabelTextId
+                id: text1Id
                 anchors.centerIn: parent
-                text: SLMP.readData1
+                text: "0"
                 color: "white"
                 font.bold: true
                 font.pointSize: 24
@@ -114,36 +119,73 @@ ApplicationWindow {
         }
 
 
-        NumericalDisplay {
-            id: numericLabelId
-            title: "Pressure"
-            titleColor: "black"
-            valueColor: "black"
-            value: SLMP.readData2
-
-            // layout alignment
+        Rectangle {
+            id: circularLabel2Id
+            width: 200
+            height: 100
+            color: "orange"
+            border.color: "black"
+            border.width: 2
+            // Layout.fillHeight: true
+            // Layout.fillWidth: true
+            radius: 5
             Layout.alignment: Qt.AlignCenter
-            Layout.fillHeight: false
-            Layout.fillWidth: false
+            Layout.minimumHeight: 100
+            Layout.minimumWidth: 100
+
+            Text {
+                id: text2Id
+                anchors.centerIn: parent
+                text: "0"
+                color: "white"
+                font.bold: true
+                font.pointSize: 24
+            }
         }
 
-        Speed {
-            id: meter1Id
-            width: 300
-            height: 300
-            Layout.margins: 10
-            Layout.alignment: Qt.AlignCenter
-            //value: Math.min(SLMP.readData1, 280)
-        }
+        // NumericalDisplay {
+        //     id: numericLabe1lId
+        //     title: "Pressure"
+        //     titleColor: "black"
+        //     valueColor: "black"
+        //     value: SLMP.readData2
 
-        Speed {
-            id: meter2Id
-            width: 300
-            height: 300
-            Layout.margins: 10
-            Layout.alignment: Qt.AlignCenter
-            //value: Math.min(SLMP.readData1, 280)
-        }
+        //     // layout alignment
+        //     Layout.alignment: Qt.AlignCenter
+        //     Layout.fillHeight: false
+        //     Layout.fillWidth: false
+        // }
+
+        // NumericalDisplay {
+        //     id: numericLabe2lId
+        //     title: "Pressure"
+        //     titleColor: "black"
+        //     valueColor: "black"
+        //     value: SLMP.readData2
+
+        //     // layout alignment
+        //     Layout.alignment: Qt.AlignCenter
+        //     Layout.fillHeight: false
+        //     Layout.fillWidth: false
+        // }
+
+        // Speed {
+        //     id: meter1Id
+        //     width: 300
+        //     height: 300
+        //     Layout.margins: 10
+        //     Layout.alignment: Qt.AlignCenter
+        //     //value: Math.min(SLMP.readData1, 280)
+        // }
+
+        // Speed {
+        //     id: meter2Id
+        //     width: 300
+        //     height: 300
+        //     Layout.margins: 10
+        //     Layout.alignment: Qt.AlignCenter
+        //     //value: Math.min(SLMP.readData1, 280)
+        // }
 
         ChartView {
             id: chartId
@@ -172,14 +214,14 @@ ApplicationWindow {
             ValuesAxis {
                 id: xAxisId
                 min: 0
-                max: 1000
+                max: 50000
                 tickCount: 10
             }
 
             ValuesAxis {
                 id: yAxisId
                 min: 0
-                max: 1000
+                max: 50000
                 tickCount: 10
             }
 

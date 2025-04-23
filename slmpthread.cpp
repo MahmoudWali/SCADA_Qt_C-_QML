@@ -67,14 +67,14 @@ void SLMPThread::read_slmp()
     const char *word_addrs[] = { "D12", "D22", NULL };
     uint16_t *data = NULL;
 
-    qDebug() << "Reading D12, D22";
+    //qDebug() << "Reading D12, D22";
     if (melcli_random_read_word(g_ctx, NULL, word_addrs, &data, NULL) != 0)
     {
-        qDebug() << "Failed.";
+        //qDebug() << "Failed.";
     }
     else
     {
-        qDebug() << "D12=" << data[0] << ", D22=" << data[1];
+        //qDebug() << "D12=" << data[0] << ", D22=" << data[1];
     }
 
     //emit this signal to anywhere (like to QML side)
@@ -83,11 +83,11 @@ void SLMPThread::read_slmp()
     c++;
     emit newReading(c, c);
     m_buffer.append(c);
-    if (m_buffer.size() >= 1000)
+    if (m_buffer.size() >= 100000)
     {
         flushBufferToFile();
     }
-    qDebug() << "Emit done. " << c;
+    //qDebug() << "Emit done. " << c;
 
     if (!m_series1 && !m_series2)
         return;
@@ -96,10 +96,15 @@ void SLMPThread::read_slmp()
     m_series1->append(c, c);    //c
     m_series2->append(c, 1000 - c);    //c
 
-    // if (m_series->count() > 500)
-    // {
-    //     m_series->removePoints(0, m_series->count() - 100);
-    // }
+    if (m_series1->count() > 5000)
+    {
+        m_series1->removePoints(0, m_series1->count() - 500);
+    }
+
+    if (m_series2->count() > 5000)
+    {
+        m_series2->removePoints(0, m_series2->count() - 500);
+    }
 
     melcli_free(data);
 }
@@ -136,7 +141,7 @@ void SLMPThread::run()
     {
         read_slmp();
 
-        QThread::msleep(20);
+        QThread::msleep(1);
     }
 
     flushBufferToFile();
