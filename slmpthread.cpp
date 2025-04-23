@@ -96,14 +96,14 @@ void SLMPThread::read_slmp()
     m_series1->append(c, c);    //c
     m_series2->append(c, 1000 - c);    //c
 
-    if (m_series1->count() > 5000)
+    if (m_series1->count() > 2000)
     {
-        m_series1->removePoints(0, m_series1->count() - 500);
+        m_series1->clear();
     }
 
-    if (m_series2->count() > 5000)
+    if (m_series2->count() > 2000)
     {
-        m_series2->removePoints(0, m_series2->count() - 500);
+        m_series2->clear();
     }
 
     melcli_free(data);

@@ -22,14 +22,6 @@ ApplicationWindow {
         onNewReading: (D12, D22) => {
                           text1Id.text = D12
                           text2Id.text = D22
-
-                          // xAxisId.min = D12
-                          // yAxisId.min = D12
-
-                          // xAxisId.max = D12 + 1000
-                          // yAxisId.max = D12 + 1000
-                          // meter1Id.value = Math.min(D12, 280)
-                          // meter2Id.value = Math.min(D22, 280)
                       }
     }
 
@@ -255,7 +247,8 @@ ApplicationWindow {
         // }
 
         Component.onCompleted: {
-            //SLMP.setSeries(seriesId);
+            // slmpWorkerThreadId.init()
+            // slmpWorkerThreadId.setSeries(series1Id, series2Id)
         }
 
     }
