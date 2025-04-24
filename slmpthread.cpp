@@ -78,23 +78,32 @@ void SLMPThread::read_slmp()
     }
 
     //emit this signal to anywhere (like to QML side)
-    //emit newReading(data[0], data[1]);
-
-    c++;
-    emit newReading(c, c);
-    m_buffer.append(c);
+    emit newReading(data[0], data[1]);
+    m_buffer.append(data[0]);
     if (m_buffer.size() >= 100000)
     {
         flushBufferToFile();
     }
+
+
+    c++;
+    // emit newReading(c, c);
+    // m_buffer.append(c);
+    // if (m_buffer.size() >= 100000)
+    // {
+    //     flushBufferToFile();
+    // }
     //qDebug() << "Emit done. " << c;
 
     if (!m_series1 && !m_series2)
         return;
 
-    //m_series->append(data[0], data[1]);    //c
-    m_series1->append(c, c);    //c
-    m_series2->append(c, 1000 - c);    //c
+
+    m_series1->append(c, data[0]);    //c
+    m_series2->append(c, data[1]);    //c
+
+    //m_series1->append(c, c);    //c
+    //m_series2->append(c, 1000 - c);    //c
 
     if (m_series1->count() > 2000)
     {
