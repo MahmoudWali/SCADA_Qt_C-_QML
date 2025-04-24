@@ -75,18 +75,35 @@ void SLMPThread::read_slmp()
     else
     {
         //qDebug() << "D12=" << data[0] << ", D22=" << data[1];
+
+        //emit this signal to anywhere (like to QML side)
+        emit newReading(data[0], data[1]);
+        m_buffer.append(data[0]);
+        if (m_buffer.size() >= 100000)
+        {
+            flushBufferToFile();
+        }
+
+        c++;
+        if (!m_series1 && !m_series2)
+            return;
+
+        m_series1->append(c, data[0]);    //c
+        m_series2->append(c, data[1]);    //c
+
+        if (m_series1->count() > 2000)
+        {
+            m_series1->clear();
+        }
+
+        if (m_series2->count() > 2000)
+        {
+            m_series2->clear();
+        }
     }
 
-    //emit this signal to anywhere (like to QML side)
-    emit newReading(data[0], data[1]);
-    m_buffer.append(data[0]);
-    if (m_buffer.size() >= 100000)
-    {
-        flushBufferToFile();
-    }
 
-
-    c++;
+    //c++;
     // emit newReading(c, c);
     // m_buffer.append(c);
     // if (m_buffer.size() >= 100000)
@@ -95,25 +112,21 @@ void SLMPThread::read_slmp()
     // }
     //qDebug() << "Emit done. " << c;
 
-    if (!m_series1 && !m_series2)
-        return;
-
-
-    m_series1->append(c, data[0]);    //c
-    m_series2->append(c, data[1]);    //c
+    // if (!m_series1 && !m_series2)
+    //     return;
 
     //m_series1->append(c, c);    //c
     //m_series2->append(c, 1000 - c);    //c
 
-    if (m_series1->count() > 2000)
-    {
-        m_series1->clear();
-    }
+    // if (m_series1->count() > 2000)
+    // {
+    //     m_series1->clear();
+    // }
 
-    if (m_series2->count() > 2000)
-    {
-        m_series2->clear();
-    }
+    // if (m_series2->count() > 2000)
+    // {
+    //     m_series2->clear();
+    // }
 
     melcli_free(data);
 }
