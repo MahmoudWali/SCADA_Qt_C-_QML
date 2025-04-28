@@ -31,7 +31,11 @@ public:
     Q_INVOKABLE void stopReading();
     void write_slmp();
     void read_slmp();
+    void read_mix_slmp();
+    void read_consecutive_slmp();
     void flushBufferToFile();
+    void flushBufferToFileMultiValue();
+    void flushBufferToFileMultiValueByteArray();
 
     // QThread interface
 protected:
@@ -61,6 +65,13 @@ private:
 
     // Thread Control
     QAtomicInt m_running;
+
+
+    //
+    const char *word_addrs[20];
+    QVector<QVector<uint16_t>> m_bufferMultiValues;
+    int numOfValues;
+
 };
 
 #endif // SLMPTHREAD_H

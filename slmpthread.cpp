@@ -9,6 +9,28 @@ SLMPThread::SLMPThread(QObject* parent) : QThread(parent), m_running(true), m_fi
     m_stream.setDevice(&m_file);
     m_stream.setRealNumberNotation(QTextStream::FixedNotation); // Optional: better formatting
     m_stream.setRealNumberPrecision(6);
+
+
+    word_addrs[0] = "D110";
+    word_addrs[1] = "D115";
+    word_addrs[2] = "D120";
+    word_addrs[3] = "D125";
+    word_addrs[4] = "D130";
+    word_addrs[5] = "D135";
+    word_addrs[6] = "D140";
+    word_addrs[7] = "D145";
+    word_addrs[8] = "D150";
+    word_addrs[9] = "D155";
+    word_addrs[10] = "D160";
+    word_addrs[11] = "D165";
+    word_addrs[12] = "D170";
+    word_addrs[13] = "D175";
+    word_addrs[14] = "D180";
+    word_addrs[15] = "D185";
+    word_addrs[16] = "D190";
+    word_addrs[17] = "D195";
+    word_addrs[18] = "D200";
+    word_addrs[19] = NULL;
 }
 
 int SLMPThread::init()
@@ -84,22 +106,22 @@ void SLMPThread::read_slmp()
             flushBufferToFile();
         }
 
-        c++;
-        if (!m_series1 && !m_series2)
-            return;
+        // c++;
+        // if (!m_series1 && !m_series2)
+        //     return;
 
-        m_series1->append(c, data[0]);    //c
-        m_series2->append(c, data[1]);    //c
+        // m_series1->append(c, data[0]);    //c
+        // m_series2->append(c, data[1]);    //c
 
-        if (m_series1->count() > 2000)
-        {
-            m_series1->clear();
-        }
+        // if (m_series1->count() > 2000)
+        // {
+        //     m_series1->clear();
+        // }
 
-        if (m_series2->count() > 2000)
-        {
-            m_series2->clear();
-        }
+        // if (m_series2->count() > 2000)
+        // {
+        //     m_series2->clear();
+        // }
     }
 
 
@@ -131,6 +153,65 @@ void SLMPThread::read_slmp()
     melcli_free(data);
 }
 
+void SLMPThread::read_mix_slmp()
+{
+    numOfValues = 19;   // number of elements in word_addrs
+
+    // for simulation
+    // uint16_t *data = new uint16_t[numOfValues];
+    // for (int i = 0; i < numOfValues; i++)
+    // {
+    //     data[i] = i;
+    // }
+
+    uint16_t *data = NULL;
+
+    int isError = melcli_random_read_word(g_ctx, NULL, word_addrs, &data, NULL);
+    if (isError == 0)
+    {
+        QVector<uint16_t> readDataVector(numOfValues, 0);
+        for (int i = 0; i < numOfValues; i++)
+        {
+            readDataVector[i] = data[i];
+        }
+
+        m_bufferMultiValues.append(readDataVector);
+        if (m_bufferMultiValues.size() >= 100000)
+        {
+            //flushBufferToFileMultiValue();
+            flushBufferToFileMultiValueByteArray();
+        }
+    }
+
+    melcli_free(data);
+}
+
+void SLMPThread::read_consecutive_slmp()
+{
+    numOfValues = 21;
+
+    uint16_t *rd_words;
+
+    int isError = melcli_batch_read(g_ctx, NULL, "D12", numOfValues, (char**)(&rd_words), NULL);   //D12 to D32 included
+    if (isError == 0)
+    {
+        QVector<uint16_t> readDataVector(numOfValues, 0);
+        for (int i = 0; i < numOfValues; i++)
+        {
+            readDataVector[i] = rd_words[i];
+        }
+
+        m_bufferMultiValues.append(readDataVector);
+        if (m_bufferMultiValues.size() >= 100000)
+        {
+            //flushBufferToFileMultiValue();
+            flushBufferToFileMultiValueByteArray();
+        }
+    }
+
+    melcli_free(rd_words);
+}
+
 void SLMPThread::setSeries(QAbstractSeries *series1, QAbstractSeries *series2)
 {
     m_series1 = qobject_cast<QLineSeries*>(series1);
@@ -155,17 +236,62 @@ void SLMPThread::flushBufferToFile()
     }
 }
 
+void SLMPThread::flushBufferToFileMultiValue()
+{
+    if (m_file.isOpen() && !m_bufferMultiValues.isEmpty())
+    {
+        for (const QVector<uint16_t> &readDataVector : std::as_const(m_bufferMultiValues))
+        {
+            for (const uint16_t &value : std::as_const(readDataVector))
+            {
+                m_stream << value << "\t";
+            }
+            m_stream << "\n";
+        }
+        m_stream.flush();
+        m_bufferMultiValues.clear();
+        m_bufferMultiValues.reserve(100000); // Reserve space to reduce reallocations
+    }
+}
+
+void SLMPThread::flushBufferToFileMultiValueByteArray()
+{
+    if (m_file.isOpen() && !m_bufferMultiValues.isEmpty())
+    {
+        QByteArray data;
+        data.reserve(m_bufferMultiValues.size() * numOfValues * 7);
+
+        for (const QVector<uint16_t> &readDataVector : std::as_const(m_bufferMultiValues))
+        {
+            for (const uint16_t &value : std::as_const(readDataVector))
+            {
+                data.append(QByteArray::number(value));
+                data.append("\t");
+            }
+            data.append("\n");
+        }
+        m_file.write(data);
+        m_bufferMultiValues.clear();
+        m_bufferMultiValues.reserve(100000); // Reserve space to reduce reallocations
+    }
+}
+
 void SLMPThread::run()
 {
-    m_buffer.reserve(100000); // Reserve space to reduce reallocations
+    //m_buffer.reserve(100000); // Reserve space to reduce reallocations
+    m_bufferMultiValues.reserve(100000); // Reserve space to reduce reallocations
 
     while (m_running.loadRelaxed())
     {
-        read_slmp();
+        //read_slmp();
+        read_mix_slmp();
+        //read_consecutive_slmp();
 
-        QThread::msleep(1);
+        //QThread::msleep(1);
     }
 
-    flushBufferToFile();
+    //flushBufferToFile();
+    //flushBufferToFileMultiValue();
+    flushBufferToFileMultiValueByteArray();
     m_file.close();
 }

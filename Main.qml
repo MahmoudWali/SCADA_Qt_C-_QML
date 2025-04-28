@@ -7,10 +7,10 @@ import QtQuick.Shapes
 import SLMPWorkerThreadAPI 1.0
 
 ApplicationWindow {
-    width: 1200
-    height: 700
+    width: 400
+    height: 200
     visible: true
-    visibility: "Maximized"
+    //visibility: "Maximized"
     title: qsTr("SLMP SCADA")
 
     Material.theme: Material.Light
@@ -86,54 +86,54 @@ ApplicationWindow {
         }
 
 
-        Rectangle {
-            id: circularLabel1Id
-            width: 200
-            height: 100
-            color: "orange"
-            border.color: "black"
-            border.width: 2
-            // Layout.fillHeight: true
-            // Layout.fillWidth: true
-            radius: 5
-            Layout.alignment: Qt.AlignCenter
-            Layout.minimumHeight: 100
-            Layout.minimumWidth: 100
+        // Rectangle {
+        //     id: circularLabel1Id
+        //     width: 200
+        //     height: 100
+        //     color: "orange"
+        //     border.color: "black"
+        //     border.width: 2
+        //     // Layout.fillHeight: true
+        //     // Layout.fillWidth: true
+        //     radius: 5
+        //     Layout.alignment: Qt.AlignCenter
+        //     Layout.minimumHeight: 100
+        //     Layout.minimumWidth: 100
 
-            Text {
-                id: text1Id
-                anchors.centerIn: parent
-                text: "0"
-                color: "white"
-                font.bold: true
-                font.pointSize: 24
-            }
-        }
+        //     Text {
+        //         id: text1Id
+        //         anchors.centerIn: parent
+        //         text: "0"
+        //         color: "white"
+        //         font.bold: true
+        //         font.pointSize: 24
+        //     }
+        // }
 
 
-        Rectangle {
-            id: circularLabel2Id
-            width: 200
-            height: 100
-            color: "orange"
-            border.color: "black"
-            border.width: 2
-            // Layout.fillHeight: true
-            // Layout.fillWidth: true
-            radius: 5
-            Layout.alignment: Qt.AlignCenter
-            Layout.minimumHeight: 100
-            Layout.minimumWidth: 100
+        // Rectangle {
+        //     id: circularLabel2Id
+        //     width: 200
+        //     height: 100
+        //     color: "orange"
+        //     border.color: "black"
+        //     border.width: 2
+        //     // Layout.fillHeight: true
+        //     // Layout.fillWidth: true
+        //     radius: 5
+        //     Layout.alignment: Qt.AlignCenter
+        //     Layout.minimumHeight: 100
+        //     Layout.minimumWidth: 100
 
-            Text {
-                id: text2Id
-                anchors.centerIn: parent
-                text: "0"
-                color: "white"
-                font.bold: true
-                font.pointSize: 24
-            }
-        }
+        //     Text {
+        //         id: text2Id
+        //         anchors.centerIn: parent
+        //         text: "0"
+        //         color: "white"
+        //         font.bold: true
+        //         font.pointSize: 24
+        //     }
+        // }
 
         // NumericalDisplay {
         //     id: numericLabe1lId
@@ -179,45 +179,45 @@ ApplicationWindow {
         //     //value: Math.min(SLMP.readData1, 280)
         // }
 
-        ChartView {
-            id: chartId
-            title: "Reading from PLC via SLMP Protocol"
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            Layout.minimumHeight: 400
-            Layout.minimumWidth: 250
-            Layout.columnSpan: 2
-            antialiasing: true
+        // ChartView {
+        //     id: chartId
+        //     title: "Reading from PLC via SLMP Protocol"
+        //     Layout.fillHeight: true
+        //     Layout.fillWidth: true
+        //     Layout.minimumHeight: 400
+        //     Layout.minimumWidth: 250
+        //     Layout.columnSpan: 2
+        //     antialiasing: true
 
-            LineSeries {
-                id: series1Id
-                name: "D12"
-                axisX: xAxisId
-                axisY: yAxisId
-            }
+        //     LineSeries {
+        //         id: series1Id
+        //         name: "D12"
+        //         axisX: xAxisId
+        //         axisY: yAxisId
+        //     }
 
-            LineSeries {
-                id: series2Id
-                name: "D22"
-                axisX: xAxisId
-                axisY: yAxisId
-            }
+        //     LineSeries {
+        //         id: series2Id
+        //         name: "D22"
+        //         axisX: xAxisId
+        //         axisY: yAxisId
+        //     }
 
-            ValuesAxis {
-                id: xAxisId
-                min: 0
-                max: 50000
-                tickCount: 10
-            }
+        //     ValuesAxis {
+        //         id: xAxisId
+        //         min: 0
+        //         max: 50000
+        //         tickCount: 10
+        //     }
 
-            ValuesAxis {
-                id: yAxisId
-                min: 0
-                max: 50000
-                tickCount: 10
-            }
+        //     ValuesAxis {
+        //         id: yAxisId
+        //         min: 0
+        //         max: 50000
+        //         tickCount: 10
+        //     }
 
-        }
+        // }
 
 
         // GraphsView {
