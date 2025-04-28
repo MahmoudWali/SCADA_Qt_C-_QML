@@ -68,6 +68,22 @@ void SLMPThread::stopReading()
     m_running.storeRelaxed(false);
 }
 
+void SLMPThread::listOfRandomAddress(const QVariantList &addressList)
+{
+    for (const QVariant &item : addressList)
+    {
+        qDebug() << item.toString();  // Assuming it's list of strings
+    }
+}
+
+void SLMPThread::listOfBatchAddress(const QVariantList &addressList)
+{
+    for (const QVariant &item : addressList)
+    {
+        qDebug() << item.toString();  // Assuming it's list of strings
+    }
+}
+
 void SLMPThread::write_slmp()
 {
     const char *word_addrs[] = { "M0", NULL };

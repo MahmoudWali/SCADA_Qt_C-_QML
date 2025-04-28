@@ -29,6 +29,9 @@ public:
     Q_INVOKABLE void setSeries(QAbstractSeries *series1, QAbstractSeries *series2);
     Q_INVOKABLE int init();
     Q_INVOKABLE void stopReading();
+    Q_INVOKABLE void listOfRandomAddress(const QVariantList &addressList);
+    Q_INVOKABLE void listOfBatchAddress(const QVariantList &addressList);
+
     void write_slmp();
     void read_slmp();
     void read_mix_slmp();
