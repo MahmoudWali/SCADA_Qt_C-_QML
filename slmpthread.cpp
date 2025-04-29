@@ -58,19 +58,15 @@ void SLMPThread::listOfRandomAddress(const QVariantList &addressList)
 {
     for (int i = 0; i < addressList.size(); i++)
     {
-        qDebug() << addressList[i].toString();  // Assuming it's list of strings
-        word_addrs_random[i] = addressList[i].toString().toStdString().c_str();
+        m_byteArrayRandom[i] = addressList[i].toString().toUtf8();
+        word_addrs_random[i] = m_byteArrayRandom[i].constData();
     }
 }
 
 void SLMPThread::listOfBatchAddress(const QVariantList &addressList)
 {
-    for (const QVariant &item : addressList)
-    {
-        qDebug() << item.toString();  // Assuming it's list of strings
-    }
-
-    word_addrs_batch = addressList[0].toString().toStdString().c_str();
+    m_byteArrayBatch = addressList[0].toString().toUtf8();
+    word_addrs_batch = m_byteArrayBatch.constData();
 }
 
 void SLMPThread::write_slmp()
@@ -162,6 +158,8 @@ void SLMPThread::read_mix_slmp()
 {
     numOfValues = 4;   // number of elements in word_addrs
 
+    //qDebug() << word_addrs_random[0] << ", " << word_addrs_random[1] << ", " << word_addrs_random[2];
+
     //for simulation
     // c++;
     // uint16_t *data = new uint16_t[numOfValues];
@@ -201,6 +199,8 @@ void SLMPThread::read_mix_slmp()
 void SLMPThread::read_consecutive_slmp()
 {
     numOfValues = 3;
+
+    //qDebug() << word_addrs_batch;
 
     //for simulation
     // c++;

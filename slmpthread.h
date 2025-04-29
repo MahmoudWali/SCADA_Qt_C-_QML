@@ -76,6 +76,8 @@ private:
     const char *word_addrs_batch;
     QVector<QVector<uint16_t>> m_bufferMultiValues;
     int numOfValues;
+    QByteArray m_byteArrayRandom[4];
+    QByteArray m_byteArrayBatch;
 
 };
 

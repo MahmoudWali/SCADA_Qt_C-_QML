@@ -15,7 +15,7 @@ ApplicationWindow {
     //visibility: "Maximized"
     title: qsTr("SLMP SCADA")
 
-    // Material.theme: Material.Light
+    //Fusion.theme: Material.Light
     // Material.accent: Material.Orange
     // Material.background: Material.BlueGrey
 
@@ -200,7 +200,7 @@ ApplicationWindow {
             font.pixelSize: 20
             label: Label {
                 text: parent.title
-                color: "navy"    // <-- Set your custom title color here
+                color: "#B39DDB"    // <-- Set your custom title color here
                 font.bold: true
             }
 
@@ -357,7 +357,7 @@ ApplicationWindow {
 
             label: Label {
                 text: parent.title
-                color: "navy"    // <-- Set your custom title color here
+                color: "#B39DDB"    // <-- Set your custom title color here
                 font.bold: true
             }
 
