@@ -11,26 +11,12 @@ SLMPThread::SLMPThread(QObject* parent) : QThread(parent), m_running(true), m_fi
     m_stream.setRealNumberPrecision(6);
 
 
-    word_addrs[0] = "D110";
-    word_addrs[1] = "D115";
-    word_addrs[2] = "D120";
-    word_addrs[3] = "D125";
-    word_addrs[4] = "D130";
-    word_addrs[5] = "D135";
-    word_addrs[6] = "D140";
-    word_addrs[7] = "D145";
-    word_addrs[8] = "D150";
-    word_addrs[9] = "D155";
-    word_addrs[10] = "D160";
-    word_addrs[11] = "D165";
-    word_addrs[12] = "D170";
-    word_addrs[13] = "D175";
-    word_addrs[14] = "D180";
-    word_addrs[15] = "D185";
-    word_addrs[16] = "D190";
-    word_addrs[17] = "D195";
-    word_addrs[18] = "D200";
-    word_addrs[19] = NULL;
+    word_addrs_random[0] = "D110";
+    word_addrs_random[1] = "D115";
+    word_addrs_random[2] = "D120";
+    word_addrs_random[3] = NULL;
+
+    word_addrs_batch = "D12";
 }
 
 int SLMPThread::init()
@@ -70,9 +56,10 @@ void SLMPThread::stopReading()
 
 void SLMPThread::listOfRandomAddress(const QVariantList &addressList)
 {
-    for (const QVariant &item : addressList)
+    for (int i = 0; i < addressList.size(); i++)
     {
-        qDebug() << item.toString();  // Assuming it's list of strings
+        qDebug() << addressList[i].toString();  // Assuming it's list of strings
+        word_addrs_random[i] = addressList[i].toString().toStdString().c_str();
     }
 }
 
@@ -82,6 +69,8 @@ void SLMPThread::listOfBatchAddress(const QVariantList &addressList)
     {
         qDebug() << item.toString();  // Assuming it's list of strings
     }
+
+    word_addrs_batch = addressList[0].toString().toStdString().c_str();
 }
 
 void SLMPThread::write_slmp()
@@ -115,7 +104,7 @@ void SLMPThread::read_slmp()
         //qDebug() << "D12=" << data[0] << ", D22=" << data[1];
 
         //emit this signal to anywhere (like to QML side)
-        emit newReading(data[0], data[1]);
+        //emit newReading(data[0], data[1]);
         m_buffer.append(data[0]);
         if (m_buffer.size() >= 100000)
         {
@@ -171,61 +160,81 @@ void SLMPThread::read_slmp()
 
 void SLMPThread::read_mix_slmp()
 {
-    numOfValues = 19;   // number of elements in word_addrs
+    numOfValues = 4;   // number of elements in word_addrs
 
-    // for simulation
+    //for simulation
+    // c++;
     // uint16_t *data = new uint16_t[numOfValues];
     // for (int i = 0; i < numOfValues; i++)
     // {
-    //     data[i] = i;
+    //     data[i] = c;
     // }
+
 
     uint16_t *data = NULL;
 
-    int isError = melcli_random_read_word(g_ctx, NULL, word_addrs, &data, NULL);
+    int isError = melcli_random_read_word(g_ctx, NULL, word_addrs_random, &data, NULL);
     if (isError == 0)
     {
-        QVector<uint16_t> readDataVector(numOfValues, 0);
-        for (int i = 0; i < numOfValues; i++)
-        {
-            readDataVector[i] = data[i];
-        }
+        emit newRandomReading(data[0], data[1], data[2]);
 
-        m_bufferMultiValues.append(readDataVector);
-        if (m_bufferMultiValues.size() >= 100000)
-        {
-            //flushBufferToFileMultiValue();
-            flushBufferToFileMultiValueByteArray();
-        }
+        // QVector<uint16_t> readDataVector(numOfValues, 0);
+        // for (int i = 0; i < numOfValues; i++)
+        // {
+        //     readDataVector[i] = data[i];
+        // }
+
+        // m_bufferMultiValues.append(readDataVector);
+        // if (m_bufferMultiValues.size() >= 100000)
+        // {
+        //     //flushBufferToFileMultiValue();
+        //     flushBufferToFileMultiValueByteArray();
+        // }
+
+        melcli_free(data);
     }
 
-    melcli_free(data);
+    // delete[] data;
+    // data = nullptr;
 }
 
 void SLMPThread::read_consecutive_slmp()
 {
-    numOfValues = 21;
+    numOfValues = 3;
+
+    //for simulation
+    // c++;
+    // uint16_t *rd_words = new uint16_t[numOfValues];
+    // for (int i = 0; i < numOfValues; i++)
+    // {
+    //     rd_words[i] = c * 2;
+    // }
 
     uint16_t *rd_words;
 
-    int isError = melcli_batch_read(g_ctx, NULL, "D12", numOfValues, (char**)(&rd_words), NULL);   //D12 to D32 included
+    int isError = melcli_batch_read(g_ctx, NULL, word_addrs_batch, numOfValues, (char**)(&rd_words), NULL);   //D12 to D32 included
     if (isError == 0)
     {
-        QVector<uint16_t> readDataVector(numOfValues, 0);
-        for (int i = 0; i < numOfValues; i++)
-        {
-            readDataVector[i] = rd_words[i];
-        }
+        emit newBatchReading(rd_words[0], rd_words[1], rd_words[2]);
 
-        m_bufferMultiValues.append(readDataVector);
-        if (m_bufferMultiValues.size() >= 100000)
-        {
-            //flushBufferToFileMultiValue();
-            flushBufferToFileMultiValueByteArray();
-        }
+        // QVector<uint16_t> readDataVector(numOfValues, 0);
+        // for (int i = 0; i < numOfValues; i++)
+        // {
+        //     readDataVector[i] = rd_words[i];
+        // }
+
+        // m_bufferMultiValues.append(readDataVector);
+        // if (m_bufferMultiValues.size() >= 100000)
+        // {
+        //     //flushBufferToFileMultiValue();
+        //     flushBufferToFileMultiValueByteArray();
+        // }
+
+        melcli_free(rd_words);
     }
 
-    melcli_free(rd_words);
+    // delete[] rd_words;
+    // rd_words = nullptr;
 }
 
 void SLMPThread::setSeries(QAbstractSeries *series1, QAbstractSeries *series2)
@@ -295,19 +304,19 @@ void SLMPThread::flushBufferToFileMultiValueByteArray()
 void SLMPThread::run()
 {
     //m_buffer.reserve(100000); // Reserve space to reduce reallocations
-    m_bufferMultiValues.reserve(100000); // Reserve space to reduce reallocations
+    //m_bufferMultiValues.reserve(100000); // Reserve space to reduce reallocations
 
     while (m_running.loadRelaxed())
     {
         //read_slmp();
         read_mix_slmp();
-        //read_consecutive_slmp();
+        read_consecutive_slmp();
 
-        //QThread::msleep(1);
+        QThread::usleep(1);
     }
 
     //flushBufferToFile();
     //flushBufferToFileMultiValue();
-    flushBufferToFileMultiValueByteArray();
-    m_file.close();
+    //flushBufferToFileMultiValueByteArray();
+    //m_file.close();
 }

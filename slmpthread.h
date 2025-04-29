@@ -46,7 +46,8 @@ protected:
 
 
 signals:
-    void newReading(double D12, double D22);
+    void newRandomReading(int val1, int val2, int val3);
+    void newBatchReading(int val1, int val2, int val3);
 
 private:
     int ctxtype = MELCLI_TYPE_TCPIP;
@@ -71,7 +72,8 @@ private:
 
 
     //
-    const char *word_addrs[20];
+    const char *word_addrs_random[4];
+    const char *word_addrs_batch;
     QVector<QVector<uint16_t>> m_bufferMultiValues;
     int numOfValues;
 

@@ -19,10 +19,17 @@ ApplicationWindow {
 
     SLMPWorkerThread {
         id: slmpWorkerThreadId
-        onNewReading: (D12, D22) => {
-                          text1Id.text = D12
-                          text2Id.text = D22
-                      }
+        onNewRandomReading: (val1, val2, val3) => {
+                                text1Id.text = val1
+                                text2Id.text = val2
+                                text3Id.text = val3
+                            }
+
+        onNewBatchReading: (val1, val2, val3) => {
+                                text4Id.text = val1
+                                text5Id.text = val2
+                                text6Id.text = val3
+                            }
     }
 
     // Connections {
@@ -107,8 +114,30 @@ ApplicationWindow {
 
     GridLayout {
         rows: 4
-        columns: 2
+        columns: 3
         anchors.fill: parent
+
+        RoundButton {
+            id: connectBtnId
+            width: 200
+            height: 200
+            // layout alignment
+            Layout.alignment: Qt.AlignHCenter
+            Layout.margins: 10
+
+            text: "Connect"
+            font.bold: true
+            font.pixelSize: 25
+
+            Layout.minimumHeight: 150
+            Layout.minimumWidth: 150
+            Layout.fillHeight: false
+            Layout.fillWidth: false
+
+            onClicked: {
+                slmpWorkerThreadId.init()
+            }
+        }
 
         RoundButton {
             id: startId
@@ -129,8 +158,7 @@ ApplicationWindow {
 
             onClicked: {
                 //SLMP.setSeries(seriesId)
-                slmpWorkerThreadId.init()
-                slmpWorkerThreadId.setSeries(series1Id, series2Id)
+                //slmpWorkerThreadId.setSeries(series1Id, series2Id)
                 slmpWorkerThreadId.start()
             }
         }
@@ -160,7 +188,7 @@ ApplicationWindow {
 
         GroupBox {
             id: randomReadingId
-            Layout.columnSpan: 2
+            Layout.columnSpan: 3
             title: "Random Reading"
             Layout.alignment: Qt.AlignCenter
             Layout.fillHeight: true
@@ -170,11 +198,15 @@ ApplicationWindow {
             font.pixelSize: 20
             label: Label {
                 text: parent.title
-                color: "navy"    // <-- Set your custom title color here
+                color: "white"    // <-- Set your custom title color here
                 font.bold: true
             }
 
             RowLayout {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                anchors.fill: parent
+
                 Rectangle {
                     id: circularLabel1Id
                     width: 200
@@ -192,7 +224,6 @@ ApplicationWindow {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            console.log("Hely")
                             inputDialog.source = 1
                             inputDialog.open()
                         }
@@ -201,10 +232,10 @@ ApplicationWindow {
                     Text {
                         id: address1Id
                         Layout.alignment: Qt.AlignVCenter
-                        text: "D12"
+                        text: "D110"
                         color: "Blue"
                         font.bold: true
-                        font.pointSize: 24
+                        font.pointSize: 14
                         padding: 2
                     }
 
@@ -237,7 +268,6 @@ ApplicationWindow {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            console.log("Hely")
                             inputDialog.source = 2
                             inputDialog.open()
                         }
@@ -246,10 +276,10 @@ ApplicationWindow {
                     Text {
                         id: address2Id
                         Layout.alignment: Qt.AlignVCenter
-                        text: "D13"
+                        text: "D115"
                         color: "Blue"
                         font.bold: true
-                        font.pointSize: 24
+                        font.pointSize: 14
                         padding: 2
                     }
 
@@ -281,7 +311,6 @@ ApplicationWindow {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            console.log("Hely")
                             inputDialog.source = 3
                             inputDialog.open()
                         }
@@ -290,10 +319,10 @@ ApplicationWindow {
                     Text {
                         id: address3Id
                         Layout.alignment: Qt.AlignVCenter
-                        text: "D14"
+                        text: "D120"
                         color: "Blue"
                         font.bold: true
-                        font.pointSize: 24
+                        font.pointSize: 14
                         padding: 2
                     }
 
@@ -315,25 +344,25 @@ ApplicationWindow {
 
         GroupBox {
             id: batchReadingId
-            Layout.columnSpan: 2
+            Layout.columnSpan: 3
             title: "Consecutive Reading"
+            Layout.alignment: Qt.AlignCenter
+            Layout.fillHeight: true
+            Layout.fillWidth: true
             Layout.margins: 5
             font.bold: true
             font.pixelSize: 20
 
-            Layout.alignment: Qt.AlignHCenter
-            Layout.fillHeight: true
-            Layout.fillWidth: true
             label: Label {
                 text: parent.title
-                color: "navy"    // <-- Set your custom title color here
+                color: "white"    // <-- Set your custom title color here
                 font.bold: true
             }
 
             RowLayout {
-                Layout.alignment: Qt.AlignHCenter
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+                anchors.fill: parent
 
                 Rectangle {
                     id: circularLabel4Id
@@ -343,11 +372,12 @@ ApplicationWindow {
                     border.color: "black"
                     border.width: 2
                     radius: 5
+                    Layout.alignment: Qt.AlignCenter
+
 
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            console.log("Hely")
                             inputDialog.source = 4
                             inputDialog.open()
                         }
@@ -359,7 +389,7 @@ ApplicationWindow {
                         text: "D12"
                         color: "Blue"
                         font.bold: true
-                        font.pointSize: 24
+                        font.pointSize: 14
                         padding: 2
                     }
 
@@ -385,11 +415,11 @@ ApplicationWindow {
                     // Layout.fillHeight: true
                     // Layout.fillWidth: true
                     radius: 5
+                    Layout.alignment: Qt.AlignCenter
 
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            console.log("Hely")
                             inputDialog.source = 4
                             inputDialog.open()
                         }
@@ -401,7 +431,7 @@ ApplicationWindow {
                         text: "D13"
                         color: "Blue"
                         font.bold: true
-                        font.pointSize: 24
+                        font.pointSize: 14
                         padding: 2
                     }
 
@@ -426,11 +456,11 @@ ApplicationWindow {
                     // Layout.fillHeight: true
                     // Layout.fillWidth: true
                     radius: 5
+                    Layout.alignment: Qt.AlignCenter
 
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            console.log("Hely")
                             inputDialog.source = 4
                             inputDialog.open()
                         }
@@ -442,7 +472,7 @@ ApplicationWindow {
                         text: "D14"
                         color: "Blue"
                         font.bold: true
-                        font.pointSize: 24
+                        font.pointSize: 14
                         padding: 2
                     }
 
