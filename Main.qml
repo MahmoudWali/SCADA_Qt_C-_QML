@@ -2,20 +2,22 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtCharts
-import QtQuick.Controls.Material
+import QtQuick.Controls.Fusion
 import QtQuick.Shapes
 import SLMPWorkerThreadAPI 1.0
 
+
 ApplicationWindow {
+    id: rootId
     width: 650
     height: 600
     visible: true
     //visibility: "Maximized"
     title: qsTr("SLMP SCADA")
 
-    Material.theme: Material.Light
-    Material.accent: Material.Orange
-    Material.background: Material.BlueGrey
+    // Material.theme: Material.Light
+    // Material.accent: Material.Orange
+    // Material.background: Material.BlueGrey
 
     SLMPWorkerThread {
         id: slmpWorkerThreadId
@@ -61,8 +63,8 @@ ApplicationWindow {
             TextField {
                 id: inputField
                 placeholderText: "Type Numeric Address for D Register"
-                width: parent.width
-                color: "white"
+                width: rootId.width * 0.7
+                color: "navy"
 
                 validator: IntValidator {
                     bottom: 0   // optional: minimum allowed value
@@ -198,7 +200,7 @@ ApplicationWindow {
             font.pixelSize: 20
             label: Label {
                 text: parent.title
-                color: "white"    // <-- Set your custom title color here
+                color: "navy"    // <-- Set your custom title color here
                 font.bold: true
             }
 
@@ -355,7 +357,7 @@ ApplicationWindow {
 
             label: Label {
                 text: parent.title
-                color: "white"    // <-- Set your custom title color here
+                color: "navy"    // <-- Set your custom title color here
                 font.bold: true
             }
 
@@ -369,7 +371,7 @@ ApplicationWindow {
                     width: 200
                     height: 100
                     color: "orange"
-                    border.color: "black"
+                    border.color: "red"
                     border.width: 2
                     radius: 5
                     Layout.alignment: Qt.AlignCenter
@@ -410,7 +412,7 @@ ApplicationWindow {
                     width: 200
                     height: 100
                     color: "orange"
-                    border.color: "black"
+                    border.color: "red"
                     border.width: 2
                     // Layout.fillHeight: true
                     // Layout.fillWidth: true
@@ -451,7 +453,7 @@ ApplicationWindow {
                     width: 200
                     height: 100
                     color: "orange"
-                    border.color: "black"
+                    border.color: "red"
                     border.width: 2
                     // Layout.fillHeight: true
                     // Layout.fillWidth: true
