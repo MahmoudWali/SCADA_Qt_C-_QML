@@ -200,7 +200,7 @@ ApplicationWindow {
             font.pixelSize: 20
             label: Label {
                 text: parent.title
-                color: "#B39DDB"    // <-- Set your custom title color here
+                color: "navy"    // <-- Set your custom title color here
                 font.bold: true
             }
 
@@ -357,7 +357,7 @@ ApplicationWindow {
 
             label: Label {
                 text: parent.title
-                color: "#B39DDB"    // <-- Set your custom title color here
+                color: "navy"    // <-- Set your custom title color here
                 font.bold: true
             }
 
