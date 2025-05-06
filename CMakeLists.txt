@@ -42,10 +42,22 @@ target_link_libraries(appSCADA
 )
 
 # adding slmp library
-include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/libslmp2/include")
-target_link_directories(appSCADA PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/libslmp2/lib")
-target_link_libraries(appSCADA PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/libslmp2/lib/libmelcli.lib")
-target_link_libraries(appSCADA PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/libslmp2/lib/libslmp.lib")
+# include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/libslmp2/include")
+# target_link_directories(appSCADA PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/libslmp2/lib")
+# target_link_libraries(appSCADA PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/libslmp2/lib/libmelcli.lib")
+# target_link_libraries(appSCADA PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/libslmp2/lib/libslmp.lib")
+
+add_library(slmp_lib INTERFACE)
+# Set include and link directories
+target_include_directories(slmp_lib INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/libslmp2/include")
+target_link_directories(slmp_lib INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/libslmp2/lib")
+target_link_libraries(slmp_lib INTERFACE
+    "${CMAKE_CURRENT_SOURCE_DIR}/libslmp2/lib/libmelcli.lib"
+    "${CMAKE_CURRENT_SOURCE_DIR}/libslmp2/lib/libslmp.lib"
+)
+
+target_link_libraries(appSCADA PUBLIC slmp_lib)
+
 
 include(GNUInstallDirs)
 install(TARGETS appSCADA
@@ -53,3 +65,4 @@ install(TARGETS appSCADA
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+add_subdirectory(SCADAQtWidgets)
