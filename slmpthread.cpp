@@ -310,7 +310,7 @@ void SLMPThread::run()
     {
         //read_slmp();
         read_mix_slmp();
-        read_consecutive_slmp();
+        //read_consecutive_slmp();
 
         QThread::usleep(1);
     }

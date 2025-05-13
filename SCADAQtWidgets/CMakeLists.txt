@@ -44,6 +44,8 @@ else()
 endif()
 
 target_link_libraries(SCADAQtWidgets PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt6::Charts Qt6::Graphs Qt6::Core Qt6::Gui)
+
+#link to SLMP created library
 target_link_libraries(SCADAQtWidgets PUBLIC slmp_lib)  # Replace with your actual target name
 
 
